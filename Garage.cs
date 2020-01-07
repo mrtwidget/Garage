@@ -19,6 +19,8 @@ namespace NEXIS.Garage
         #region Fields
 
         public static Garage Instance;
+        public Garages Garages;
+        public List<Garages> GarageList;
 
         #endregion
 
@@ -27,6 +29,8 @@ namespace NEXIS.Garage
         protected override void Load()
         {
             Instance = this;
+            Garages = new Garages();
+            Garages.Load();
 
             U.Events.OnPlayerConnected += Events_OnPlayerConnected;
             U.Events.OnPlayerDisconnected += Events_OnPlayerDisconnected;
@@ -36,6 +40,11 @@ namespace NEXIS.Garage
 
         protected override void Unload()
         {
+            Garages.Update();
+
+            U.Events.OnPlayerConnected -= Events_OnPlayerConnected;
+            U.Events.OnPlayerDisconnected -= Events_OnPlayerDisconnected;
+
             Logger.Log("Unloaded!", ConsoleColor.Yellow);
         }
 
@@ -44,7 +53,10 @@ namespace NEXIS.Garage
             get
             {
                 return new TranslationList() {
-                    {"garage_disabled", "Garage is currently unavailable"}
+                    {"garage_disabled", "Garage is currently unavailable"},
+                    {"garage_invalid_command", "Invalid command! Type /garage to view correct syntax!"},
+                    {"garage_vehicle_saved", "Your vehicle has been saved to your garage!"},
+                    {"garage_max_vehicles_reached", "You cannot save any more vehicles to your garage!"}
                 };
             }
         }
@@ -55,10 +67,18 @@ namespace NEXIS.Garage
 
         public void Events_OnPlayerConnected(UnturnedPlayer player)
         {
+            Garages g = GarageList.Find(x => x.SteamID == player.CSteamID.ToString());
+            if (g == null)
+            {
+                var newGarage = new Garages();
+                newGarage.SteamID = player.CSteamID.ToString();
+                GarageList.Add(newGarage);
+            }
         }
 
         public void Events_OnPlayerDisconnected(UnturnedPlayer player)
         {
+
         }
 
         #endregion
