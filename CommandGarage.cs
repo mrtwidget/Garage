@@ -21,7 +21,7 @@ namespace NEXIS.Garage
 
         public List<string> Aliases => new List<string>() { "g" };
 
-        public string Syntax => "/garage";
+        public string Syntax => "/garage [save|load]";
 
         public List<string> Permissions => new List<string>() { "garage" };
 
@@ -38,23 +38,42 @@ namespace NEXIS.Garage
                     case "save":
                         if (player.IsInVehicle)
                         {
-                            Garages g = Garage.Instance.GarageList.Find(x => x.SteamID == player.CSteamID.ToString());
-                            Console.WriteLine("got player");
-                            if (g.Cars.Count > Garage.Instance.Configuration.Instance.MaxVehicles)
+                            Garages plrGarage = Garage.Instance.GarageList.Find(x => x.SteamID == player.CSteamID.ToString());
+                            if (plrGarage == null)
                             {
-                                UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_max_vehicles_reached"), Color.red);
+                                UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_error"), Color.red);
+                                Console.WriteLine("ERROR! Cannot find garage for online player!");
                                 return;
                             }
-
-                            Console.WriteLine("trying to add vehicle...");
-                            g.Cars.Add(player.CurrentVehicle.id);
-                            Console.WriteLine("added vehicle");
+                            plrGarage.VehicleID = player.CurrentVehicle.id;
                             UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_vehicle_saved"), Color.green);
+                        }
+                        else
+                        {
+                            UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_not_in_vehicle"), Color.red);
                         }
                         break;
                     case "load":
-                        //Garages g = Garage.Instance.GarageList.Find(x => x.Player == player.CSteamID);
+                        Garages plrVehicle = Garage.Instance.GarageList.Find(x => x.SteamID == player.CSteamID.ToString());
+                        if (plrVehicle == null)
+                        {
+                            UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_error"), Color.red);
+                            Console.WriteLine("ERROR! Cannot find garage for online player!");
+                            return;
+                        }
 
+                        if (plrVehicle.VehicleID == 0)
+                        {
+                            UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_no_vehicle"), Color.red);
+                            return;
+                        }
+
+                        player.GiveVehicle(plrVehicle.VehicleID);
+
+                        if (Garage.Instance.Configuration.Instance.RemoveVehicleWhenLoaded)
+                            plrVehicle.VehicleID = 0;
+
+                        UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_vehicle_loaded"), Color.green);
                         break;
                     default:
                         UnturnedChat.Say(caller, Garage.Instance.Translations.Instance.Translate("garage_invalid_command"), Color.red);

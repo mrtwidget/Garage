@@ -9,14 +9,12 @@ namespace NEXIS.Garage
     {
         public bool Debug;
         public string DataDirectory;
-        public int MaxVehicles;
         public bool RemoveVehicleWhenLoaded;
 
         public void LoadDefaults()
         {
             Debug = true;
             DataDirectory = "Plugins/Garage/";
-            MaxVehicles = 6;
             RemoveVehicleWhenLoaded = true;
         }
     }

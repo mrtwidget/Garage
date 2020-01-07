@@ -55,8 +55,11 @@ namespace NEXIS.Garage
                 return new TranslationList() {
                     {"garage_disabled", "Garage is currently unavailable"},
                     {"garage_invalid_command", "Invalid command! Type /garage to view correct syntax!"},
-                    {"garage_vehicle_saved", "Your vehicle has been saved to your garage!"},
-                    {"garage_max_vehicles_reached", "You cannot save any more vehicles to your garage!"}
+                    {"garage_vehicle_saved", "This vehicle has been parked in your garage!"},
+                    {"garage_error", "Something went wrong with your Garage! Report this to the admins!"},
+                    {"garage_vehicle_loaded", "Spawned a vehicle from your garage!"},
+                    {"garage_no_vehicle", "You don't have a vehicle parked in your garage"},
+                    {"garage_not_in_vehicle", "You must be in a vehicle to park it in your garage!"}
                 };
             }
         }
@@ -72,6 +75,7 @@ namespace NEXIS.Garage
             {
                 var newGarage = new Garages();
                 newGarage.SteamID = player.CSteamID.ToString();
+                newGarage.VehicleID = 0;
                 GarageList.Add(newGarage);
             }
         }

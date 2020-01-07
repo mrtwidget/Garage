@@ -10,7 +10,7 @@ namespace NEXIS.Garage
     public class Garages
     {
         public string SteamID { get; set; }
-        public List<ushort> Cars { get; set; }
+        public ushort VehicleID { get; set; }
 
         public void Load()
         {
@@ -26,7 +26,7 @@ namespace NEXIS.Garage
             Garage.Instance.GarageList = json.ToObject<List<Garages>>();
 
             if (Garage.Instance.Configuration.Instance.Debug)
-                Console.WriteLine("Player Vehicles Loaded: " + Garage.Instance.GarageList.Count);
+                Console.WriteLine("Player Garages Loaded: " + Garage.Instance.GarageList.Count);
         }
 
         public void Update()
